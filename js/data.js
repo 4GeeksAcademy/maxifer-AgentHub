@@ -7,6 +7,36 @@ export const navSections = [
   { id: "errors", label: "Log de errores", icon: "triangle-alert", subtitle: "Incidencias y diagnóstico" },
 ];
 
+export const currentAdmin = {
+  id: "admin-1",
+  name: "Admin User",
+  role: "System Architect",
+  email: "admin@agenthub.io",
+  team: "Platform Operations",
+  timezone: "America/Mexico_City",
+  language: "Spanish",
+  accessLevel: "Super Admin",
+  avatarUrl: "https://i.pravatar.cc/160?img=68",
+};
+
+export const settingsPrototype = {
+  appearance: [
+    { key: "Theme", value: "System default" },
+    { key: "Density", value: "Comfortable" },
+    { key: "Date format", value: "YYYY-MM-DD" },
+  ],
+  notifications: [
+    { key: "Critical alerts", value: "Enabled" },
+    { key: "Weekly digest", value: "Enabled" },
+    { key: "System announcements", value: "Muted" },
+  ],
+  security: [
+    { key: "2FA", value: "Enabled" },
+    { key: "Session timeout", value: "30 minutes" },
+    { key: "Last password update", value: "2026-05-10" },
+  ],
+};
+
 export const metrics = [
   { id: "revenue", label: "Total Revenue", value: "$128,450", icon: "trending-up", tone: "emerald" },
   { id: "discountLoss", label: "Discount Losses", value: "$12,780", icon: "badge-dollar-sign", tone: "amber" },

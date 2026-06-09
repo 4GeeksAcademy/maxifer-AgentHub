@@ -45,7 +45,7 @@ export function actionDropdown(dropdownId, items) {
   return `
     <div class="relative" data-dropdown="${dropdownId}">
       <button class="rounded-md border border-slate-300 px-2 py-1 text-sm text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800" data-dropdown-trigger="${dropdownId}" aria-expanded="false" aria-label="Open actions">
-        <i data-lucide="ellipsis" class="h-4 w-4"></i>
+        <i data-lucide="ellipsis-vertical" class="h-4 w-4"></i>
       </button>
       <div class="pointer-events-none absolute right-0 z-20 mt-2 hidden min-w-40 rounded-lg border border-slate-200 bg-white py-1 shadow-xl dark:border-slate-700 dark:bg-slate-900" data-dropdown-menu="${dropdownId}">
         ${options}

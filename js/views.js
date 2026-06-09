@@ -1,4 +1,4 @@
-import { agents, contracts, errors, metrics, navSections, skillsCatalog, users } from "./data.js";
+import { agents, contracts, currentAdmin, errors, metrics, navSections, settingsPrototype, skillsCatalog, users } from "./data.js";
 import { actionDropdown, cardShell, errorTypeBadge, getMetricTone, modalTemplate, statusBadge, tableWrapper } from "./components.js";
 
 function metricCard(metric) {
@@ -187,7 +187,7 @@ export function getSectionMeta(sectionId) {
 }
 
 export function renderSidebar(activeSection) {
-  return navSections
+  const navItems = navSections
     .map((section) => {
       const active = section.id === activeSection;
       const classes = active
@@ -201,6 +201,20 @@ export function renderSidebar(activeSection) {
       `;
     })
     .join("");
+
+  return `
+    <div class="space-y-1">${navItems}</div>
+    <div class="mt-4 border-t border-slate-200 pt-4 dark:border-slate-800 lg:mt-auto">
+      <button class="mb-1 flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" data-action="settings-view">
+        <i data-lucide="settings" class="h-4 w-4"></i>
+        Settings
+      </button>
+      <button class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" data-action="logout-confirm">
+        <i data-lucide="log-out" class="h-4 w-4"></i>
+        Logout
+      </button>
+    </div>
+  `;
 }
 
 export function renderSection(sectionId, expandedIds) {
@@ -224,6 +238,92 @@ export function renderSection(sectionId, expandedIds) {
 export function buildModal(modalData) {
   if (!modalData) {
     return "";
+  }
+
+  if (modalData.type === "profile-view") {
+    return modalTemplate(
+      "Perfil del administrador",
+      `
+      <div class="space-y-6">
+        <section class="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/40">
+          <img src="${currentAdmin.avatarUrl}" alt="${currentAdmin.name}" class="h-16 w-16 rounded-full border border-slate-200 object-cover dark:border-slate-700" />
+          <div>
+            <p class="text-base font-semibold">${currentAdmin.name}</p>
+            <p class="text-sm text-slate-600 dark:text-slate-300">${currentAdmin.role}</p>
+            <div class="mt-2 inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">Cuenta operativa</div>
+          </div>
+        </section>
+
+        <dl class="grid gap-3 text-sm sm:grid-cols-2">
+          <div><dt class="font-semibold text-slate-500 dark:text-slate-400">Email</dt><dd>${currentAdmin.email}</dd></div>
+          <div><dt class="font-semibold text-slate-500 dark:text-slate-400">Equipo</dt><dd>${currentAdmin.team}</dd></div>
+          <div><dt class="font-semibold text-slate-500 dark:text-slate-400">Zona horaria</dt><dd>${currentAdmin.timezone}</dd></div>
+          <div><dt class="font-semibold text-slate-500 dark:text-slate-400">Idioma</dt><dd>${currentAdmin.language}</dd></div>
+          <div><dt class="font-semibold text-slate-500 dark:text-slate-400">Nivel de acceso</dt><dd>${currentAdmin.accessLevel}</dd></div>
+          <div><dt class="font-semibold text-slate-500 dark:text-slate-400">ID</dt><dd>${currentAdmin.id}</dd></div>
+        </dl>
+      </div>
+    `,
+    );
+  }
+
+  if (modalData.type === "settings-view") {
+    const renderSettingRows = (rows) =>
+      rows
+        .map(
+          (item) => `
+          <div class="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 dark:border-slate-700">
+            <p class="text-sm text-slate-600 dark:text-slate-300">${item.key}</p>
+            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-700/40 dark:text-slate-200">${item.value}</span>
+          </div>
+        `,
+        )
+        .join("");
+
+    return modalTemplate(
+      "Configuracion del sistema",
+      `
+      <div class="space-y-5">
+        <section>
+          <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Apariencia</h4>
+          <div class="space-y-2">${renderSettingRows(settingsPrototype.appearance)}</div>
+        </section>
+        <section>
+          <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Notificaciones</h4>
+          <div class="space-y-2">${renderSettingRows(settingsPrototype.notifications)}</div>
+        </section>
+        <section>
+          <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Seguridad</h4>
+          <div class="space-y-2">${renderSettingRows(settingsPrototype.security)}</div>
+        </section>
+      </div>
+    `,
+    );
+  }
+
+  if (modalData.type === "logout-confirm") {
+    return modalTemplate(
+      "Confirmar logout",
+      `
+      <div class="space-y-5">
+        <div class="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-700/40 dark:bg-amber-500/10 dark:text-amber-200">
+          Este flujo es un prototipo de diseño. No se cerrara ninguna sesion real.
+        </div>
+        <div class="space-y-1 text-sm">
+          <p class="font-semibold">Quieres salir del panel?</p>
+          <p class="text-slate-600 dark:text-slate-300">Puedes usar esta vista como referencia para integrar autenticacion real en una siguiente iteracion.</p>
+        </div>
+        <div class="flex flex-wrap justify-end gap-2">
+          <button class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800" data-modal-close>
+            Cancelar
+          </button>
+          <button class="rounded-lg border border-rose-300 bg-rose-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-rose-700 dark:border-rose-600" data-action="logout-prototype">
+            Confirmar logout
+          </button>
+        </div>
+      </div>
+    `,
+    );
   }
 
   if (modalData.type === "user-view") {

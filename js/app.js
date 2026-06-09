@@ -96,10 +96,22 @@ function handleDocumentClick(event) {
     const action = actionButton.getAttribute("data-action");
     const rowId = actionButton.getAttribute("data-row-id");
 
-    if (action && rowId) {
-      const modalActions = new Set(["user-view", "agent-configure", "skill-view", "contract-view", "error-view"]);
-      if (modalActions.has(action)) {
+    if (action) {
+      const inertVisualActions = new Set(["settings-view", "logout-confirm"]);
+      const tableModalActions = new Set(["user-view", "agent-configure", "skill-view", "contract-view", "error-view"]);
+      const accountModalActions = new Set(["profile-view"]);
+
+      if (inertVisualActions.has(action)) {
+        return;
+      }
+
+      if (tableModalActions.has(action) && rowId) {
         setOpenModal({ type: action, rowId });
+      } else if (accountModalActions.has(action)) {
+        setOpenModal({ type: action });
+      } else if (action === "logout-prototype") {
+        // Keep logout as visual-only prototype: close the modal without side effects.
+        clearOpenModal();
       }
     }
 
